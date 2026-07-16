@@ -537,15 +537,97 @@ function admin_login(string $email,string $password): bool {
 function admin_logout(): void { unset($_SESSION['admin_user']);session_regenerate_id(true); }
 function update_admin_password(string $id,string $password): void { $all=data_read('admins',[]);foreach($all as &$a)if(($a['id']??'')===$id){$a['password_hash']=password_hash($password,PASSWORD_DEFAULT);$a['updated_at']=now_iso();}data_write('admins',$all); }
 
-function encrypt_secret(string $plain): string {
-    if($plain==='')return '';$key=base64_decode((string)cfg('app_key'),true);if($key===false||strlen($key)<32)$key=hash('sha256',(string)cfg('app_key'),true);
-    $key=substr($key,0,SODIUM_CRYPTO_SECRETBOX_KEYBYTES);$nonce=random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-    return 'enc:'.base64_encode($nonce.sodium_crypto_secretbox($plain,$nonce,$key));
+function secret_key_bytes(): string {
+    $appKey = trim((string) cfg('app_key'));
+    if ($appKey === '') {
+        throw new RuntimeException('The application encryption key is missing from config.local.php.');
+    }
+
+    $decoded = base64_decode($appKey, true);
+    $material = ($decoded !== false && $decoded !== '') ? $decoded : $appKey;
+    return hash('sha256', $material, true);
 }
+
+function encrypt_secret(string $plain): string {
+    if ($plain === '') return '';
+    $key = secret_key_bytes();
+
+    // Prefer Sodium when the hosting PHP build provides it.
+    if (
+        function_exists('sodium_crypto_secretbox') &&
+        defined('SODIUM_CRYPTO_SECRETBOX_KEYBYTES') &&
+        defined('SODIUM_CRYPTO_SECRETBOX_NONCEBYTES')
+    ) {
+        $sodiumKey = substr($key, 0, SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $cipher = sodium_crypto_secretbox($plain, $nonce, $sodiumKey);
+        return 'enc:sodium:' . base64_encode($nonce . $cipher);
+    }
+
+    // Hostinger and most shared hosts provide OpenSSL even when Sodium is unavailable.
+    if (function_exists('openssl_encrypt')) {
+        $iv = random_bytes(12);
+        $tag = '';
+        $cipher = openssl_encrypt($plain, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+        if ($cipher === false || $tag === '') {
+            throw new RuntimeException('OpenSSL could not encrypt the SMTP password.');
+        }
+        return 'enc:gcm:' . base64_encode($iv . $tag . $cipher);
+    }
+
+    throw new RuntimeException('Neither Sodium nor OpenSSL encryption is available in this PHP installation.');
+}
+
 function decrypt_secret(string $stored): string {
-    if($stored===''||!str_starts_with($stored,'enc:'))return $stored;$raw=base64_decode(substr($stored,4),true);if($raw===false)return '';
-    $key=base64_decode((string)cfg('app_key'),true);if($key===false||strlen($key)<32)$key=hash('sha256',(string)cfg('app_key'),true);$key=substr($key,0,SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
-    $nonce=substr($raw,0,SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);$cipher=substr($raw,SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);$plain=sodium_crypto_secretbox_open($cipher,$nonce,$key);return $plain===false?'':$plain;
+    if ($stored === '') return '';
+    if (!str_starts_with($stored, 'enc:')) return $stored; // legacy plain value
+
+    $key = secret_key_bytes();
+
+    if (str_starts_with($stored, 'enc:sodium:')) {
+        if (
+            !function_exists('sodium_crypto_secretbox_open') ||
+            !defined('SODIUM_CRYPTO_SECRETBOX_KEYBYTES') ||
+            !defined('SODIUM_CRYPTO_SECRETBOX_NONCEBYTES')
+        ) {
+            return '';
+        }
+        $raw = base64_decode(substr($stored, 11), true);
+        if ($raw === false || strlen($raw) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) return '';
+        $sodiumKey = substr($key, 0, SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+        $nonce = substr($raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $cipher = substr($raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $plain = sodium_crypto_secretbox_open($cipher, $nonce, $sodiumKey);
+        return $plain === false ? '' : $plain;
+    }
+
+    if (str_starts_with($stored, 'enc:gcm:')) {
+        if (!function_exists('openssl_decrypt')) return '';
+        $raw = base64_decode(substr($stored, 8), true);
+        if ($raw === false || strlen($raw) <= 28) return '';
+        $iv = substr($raw, 0, 12);
+        $tag = substr($raw, 12, 16);
+        $cipher = substr($raw, 28);
+        $plain = openssl_decrypt($cipher, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+        return $plain === false ? '' : $plain;
+    }
+
+    // Backward compatibility with the first release's "enc:" Sodium format.
+    if (
+        function_exists('sodium_crypto_secretbox_open') &&
+        defined('SODIUM_CRYPTO_SECRETBOX_KEYBYTES') &&
+        defined('SODIUM_CRYPTO_SECRETBOX_NONCEBYTES')
+    ) {
+        $raw = base64_decode(substr($stored, 4), true);
+        if ($raw === false || strlen($raw) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES) return '';
+        $sodiumKey = substr($key, 0, SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+        $nonce = substr($raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $cipher = substr($raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $plain = sodium_crypto_secretbox_open($cipher, $nonce, $sodiumKey);
+        return $plain === false ? '' : $plain;
+    }
+
+    return '';
 }
 
 function safe_upload(array $file,string $carSlug): array {

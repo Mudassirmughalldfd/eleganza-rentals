@@ -13,16 +13,25 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         ]);activity('Website settings updated');flash('success','Website content and contact details saved.');redirect(url('admin/settings.php?tab=general'));
     }
     if($action==='save_email'){
-        $changes=[
-            'smtp_enabled'=>isset($_POST['smtp_enabled'])?'1':'0','smtp_host'=>trim((string)($_POST['smtp_host']??'')),
-            'smtp_port'=>trim((string)($_POST['smtp_port']??'587')),'smtp_encryption'=>(string)($_POST['smtp_encryption']??'tls'),
-            'smtp_username'=>trim((string)($_POST['smtp_username']??'')),'smtp_from_email'=>trim((string)($_POST['smtp_from_email']??'')),
-            'smtp_from_name'=>trim((string)($_POST['smtp_from_name']??'')),'notification_email'=>trim((string)($_POST['notification_email']??'')),
-            'auto_reply_enabled'=>isset($_POST['auto_reply_enabled'])?'1':'0','notification_subject'=>trim((string)($_POST['notification_subject']??'')),
-            'auto_reply_subject'=>trim((string)($_POST['auto_reply_subject']??'')),'auto_reply_body'=>(string)($_POST['auto_reply_body']??''),
-        ];
-        $password=(string)($_POST['smtp_password']??'');if($password!=='')$changes['smtp_password']=encrypt_secret($password);
-        save_settings($changes);activity('Email settings updated');flash('success','SMTP and email templates saved.');redirect(url('admin/settings.php?tab=email'));
+        try {
+            $changes=[
+                'smtp_enabled'=>isset($_POST['smtp_enabled'])?'1':'0','smtp_host'=>trim((string)($_POST['smtp_host']??'')),
+                'smtp_port'=>trim((string)($_POST['smtp_port']??'587')),'smtp_encryption'=>(string)($_POST['smtp_encryption']??'tls'),
+                'smtp_username'=>trim((string)($_POST['smtp_username']??'')),'smtp_from_email'=>trim((string)($_POST['smtp_from_email']??'')),
+                'smtp_from_name'=>trim((string)($_POST['smtp_from_name']??'')),'notification_email'=>trim((string)($_POST['notification_email']??'')),
+                'auto_reply_enabled'=>isset($_POST['auto_reply_enabled'])?'1':'0','notification_subject'=>trim((string)($_POST['notification_subject']??'')),
+                'auto_reply_subject'=>trim((string)($_POST['auto_reply_subject']??'')),'auto_reply_body'=>(string)($_POST['auto_reply_body']??''),
+            ];
+            $password=(string)($_POST['smtp_password']??'');
+            if($password!=='')$changes['smtp_password']=encrypt_secret($password);
+            save_settings($changes);
+            activity('Email settings updated');
+            flash('success','SMTP and email templates saved.');
+        } catch (Throwable $e) {
+            error_log('Eleganza SMTP settings save failed: '.$e->getMessage());
+            flash('error','Email settings could not be saved: '.$e->getMessage());
+        }
+        redirect(url('admin/settings.php?tab=email'));
     }
     if($action==='test_email'){
         try{
