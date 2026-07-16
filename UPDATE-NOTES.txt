@@ -1,0 +1,12 @@
+MYSQL DATABASE RELEASE
+======================
+
+- Replaced the JSON live-data backend with MySQL/MariaDB.
+- Added phpMyAdmin-visible tables for admins, settings, cars, prices, media,
+  availability, messages and activity logs.
+- Added guided install.php setup for XAMPP and Hostinger.
+- Added safe config.local.php secrets handling for GitHub deployments.
+- Added Admin > Database status and SQL backup export.
+- Preserved the latest responsive design, branded scrollbars, custom dropdowns,
+  separate Contact Us and Book Now pages, availability validation, vehicle
+  images/videos and Hostinger SMTP configuration.

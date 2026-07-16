@@ -1,0 +1,21 @@
+# Secrets and local installation state
+/config.local.php
+/storage/installed.lock
+/storage/*.log
+
+# User-uploaded media created after deployment
+/uploads/cars/*/*
+!/uploads/cars/mercedes/mercedes-01.jpg
+!/uploads/cars/mercedes/mercedes-02.jpg
+!/uploads/cars/mercedes/mercedes-03.jpg
+!/uploads/cars/mercedes/mercedes-04.jpg
+!/uploads/cars/bmw/bmw-01.jpg
+!/uploads/cars/bmw/bmw-02.jpg
+!/uploads/cars/bmw/bmw-03.jpg
+!/uploads/cars/bmw/bmw-04.jpg
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

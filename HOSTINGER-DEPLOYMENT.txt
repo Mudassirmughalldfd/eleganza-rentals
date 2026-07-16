@@ -1,0 +1,12 @@
+HOSTINGER QUICK SETUP
+=====================
+
+1. Create a MySQL database and database user in Hostinger hPanel.
+2. Deploy this complete project to public_html using GitHub or File Manager.
+3. Open https://your-domain/install.php
+4. Enter the exact Hostinger database host, name, username and password.
+5. Choose a new admin login and install.
+6. Open /admin/ and configure Hostinger SMTP under Website & Email.
+7. Confirm tables in hPanel phpMyAdmin.
+
+Full instructions: GITHUB-HOSTINGER-SETUP.md

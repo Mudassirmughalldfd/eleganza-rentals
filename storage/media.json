@@ -1,0 +1,134 @@
+[
+    {
+        "id": "media_mercedes_image_01",
+        "car_id": "car_mercedes",
+        "type": "image",
+        "path": "uploads/cars/mercedes/mercedes-01.jpg",
+        "poster": "",
+        "title": "Mercedes-AMG A 35 front three-quarter view",
+        "alt": "Mercedes-AMG A 35 4MATIC front three-quarter view",
+        "sort_order": 1,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_mercedes_image_02",
+        "car_id": "car_mercedes",
+        "type": "image",
+        "path": "uploads/cars/mercedes/mercedes-02.jpg",
+        "poster": "",
+        "title": "Mercedes-AMG A 35 rear three-quarter view",
+        "alt": "Mercedes-AMG A 35 4MATIC rear three-quarter view",
+        "sort_order": 2,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_mercedes_image_03",
+        "car_id": "car_mercedes",
+        "type": "image",
+        "path": "uploads/cars/mercedes/mercedes-03.jpg",
+        "poster": "",
+        "title": "Mercedes-AMG A 35 hatchback front view",
+        "alt": "Mercedes-AMG A 35 4MATIC hatchback front view",
+        "sort_order": 3,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_mercedes_image_04",
+        "car_id": "car_mercedes",
+        "type": "image",
+        "path": "uploads/cars/mercedes/mercedes-04.jpg",
+        "poster": "",
+        "title": "Mercedes-AMG A 35 hatchback rear view",
+        "alt": "Mercedes-AMG A 35 4MATIC hatchback rear view",
+        "sort_order": 4,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_mercedes_youtube_01",
+        "car_id": "car_mercedes",
+        "type": "youtube",
+        "path": "https://www.youtube.com/watch?v=5NKPcsrTdKY",
+        "poster": "uploads/cars/mercedes/mercedes-01.jpg",
+        "title": "2022 Mercedes-AMG A 35 — Exterior, Interior & Sound",
+        "alt": "2022 Mercedes-AMG A 35 exterior interior and sound video",
+        "sort_order": 5,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_mercedes_youtube_02",
+        "car_id": "car_mercedes",
+        "type": "youtube",
+        "path": "https://www.youtube.com/watch?v=G04wzWRH9ME",
+        "poster": "uploads/cars/mercedes/mercedes-03.jpg",
+        "title": "2022 A 35 Premium 4MATIC Edition — Walkaround",
+        "alt": "2022 Mercedes-AMG A 35 Premium 4MATIC Edition walkaround video",
+        "sort_order": 6,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_bmw_image_01",
+        "car_id": "car_bmw",
+        "type": "image",
+        "path": "uploads/cars/bmw/bmw-01.jpg",
+        "poster": "",
+        "title": "BMW 420d M Sport front three-quarter view",
+        "alt": "BMW 420d M Sport front three-quarter view",
+        "sort_order": 1,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_bmw_image_02",
+        "car_id": "car_bmw",
+        "type": "image",
+        "path": "uploads/cars/bmw/bmw-02.jpg",
+        "poster": "",
+        "title": "BMW 4 Series Coupé side and rear view",
+        "alt": "BMW 4 Series 420d Coupé side and rear view",
+        "sort_order": 2,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_bmw_image_03",
+        "car_id": "car_bmw",
+        "type": "image",
+        "path": "uploads/cars/bmw/bmw-03.jpg",
+        "poster": "",
+        "title": "BMW 4 Series Coupé road view",
+        "alt": "BMW 4 Series 420d Coupé road view",
+        "sort_order": 3,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_bmw_image_04",
+        "car_id": "car_bmw",
+        "type": "image",
+        "path": "uploads/cars/bmw/bmw-04.jpg",
+        "poster": "",
+        "title": "BMW 4 Series Coupé profile view",
+        "alt": "BMW 4 Series 420d Coupé profile view",
+        "sort_order": 4,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_bmw_youtube_01",
+        "car_id": "car_bmw",
+        "type": "youtube",
+        "path": "https://www.youtube.com/watch?v=BZWHH9ScmwM",
+        "poster": "uploads/cars/bmw/bmw-01.jpg",
+        "title": "2018 BMW 420d xDrive — Exterior & Interior",
+        "alt": "2018 BMW 420d xDrive exterior and interior video",
+        "sort_order": 5,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    },
+    {
+        "id": "media_bmw_youtube_02",
+        "car_id": "car_bmw",
+        "type": "youtube",
+        "path": "https://www.youtube.com/watch?v=1V8ep4o3-B8",
+        "poster": "uploads/cars/bmw/bmw-02.jpg",
+        "title": "2018 BMW 420d M Sport — Walkaround",
+        "alt": "2018 BMW 420d M Sport walkaround video",
+        "sort_order": 6,
+        "created_at": "2026-07-16T12:00:00+01:00"
+    }
+]

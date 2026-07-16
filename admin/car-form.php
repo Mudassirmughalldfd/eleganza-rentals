@@ -1,0 +1,28 @@
+<?php
+require dirname(__DIR__) . '/includes/bootstrap.php';require_admin();
+$id=(string)($_GET['id']??$_POST['id']??'');$existing=$id?car_by_id($id):null;
+$car=$existing?:['id'=>'','make'=>'','model'=>'','year'=>'','slug'=>'','starting_price'=>'','short_description'=>'','description'=>'','prices'=>['1'=>'','2'=>'','3'=>'','4'=>'','5'=>'','6'=>'','7'=>''],'over_seven'=>'Contact us','published'=>true,'featured'=>true,'sort_order'=>count(cars_all(false))+1,'default_status'=>'available','public_note'=>'','created_at'=>''];
+$errors=[];
+if($_SERVER['REQUEST_METHOD']==='POST'){
+    verify_csrf();
+    $car['make']=trim((string)($_POST['make']??''));$car['model']=trim((string)($_POST['model']??''));$car['year']=trim((string)($_POST['year']??''));
+    $car['slug']=slugify((string)($_POST['slug']??($car['make'].' '.$car['model'])));$car['starting_price']=trim((string)($_POST['starting_price']??''));
+    $car['short_description']=trim((string)($_POST['short_description']??''));$car['description']=trim((string)($_POST['description']??''));
+    $car['over_seven']=trim((string)($_POST['over_seven']??'Contact us'));$car['published']=isset($_POST['published']);$car['featured']=isset($_POST['featured']);
+    $car['sort_order']=(int)($_POST['sort_order']??99);$car['default_status']=(string)($_POST['default_status']??'available');$car['public_note']=trim((string)($_POST['public_note']??''));
+    foreach(range(1,7) as $day)$car['prices'][(string)$day]=trim((string)($_POST['price_'.$day]??''));
+    if($car['make']===''||$car['model']===''||$car['year']===''||$car['slug']==='')$errors[]='Make, model, year and slug are required.';
+    if(!is_numeric($car['starting_price']))$errors[]='Starting price must be a number.';
+    foreach(cars_all(false) as $other)if(($other['slug']??'')===$car['slug']&&($other['id']??'')!==($car['id']??''))$errors[]='Another vehicle already uses this slug.';
+    if(!$errors){$saved=save_car($car);activity($existing?'Vehicle updated':'Vehicle added',$saved['make'].' '.$saved['model']);flash('success','Vehicle saved successfully.');redirect(url('admin/car-form.php?id='.rawurlencode($saved['id'])));}
+}
+$adminPageTitle=$existing?'Edit Vehicle':'Add Vehicle';$adminCurrent='cars';require dirname(__DIR__) . '/includes/admin-header.php';
+?>
+<?php foreach($errors as $error):?><div class="admin-alert error"><?=h($error)?></div><?php endforeach;?>
+<form class="admin-form" method="post"><?=csrf_field()?><input type="hidden" name="id" value="<?=h($car['id'])?>">
+<section class="form-section"><h2>Vehicle Details</h2><div class="field-grid three"><label class="field"><span>Make *</span><input type="text" name="make" value="<?=h($car['make'])?>" required></label><label class="field"><span>Model *</span><input type="text" name="model" value="<?=h($car['model'])?>" required data-slug-source="#vehicle-slug"></label><label class="field"><span>Year *</span><input type="number" min="1950" max="<?=date('Y')+1?>" name="year" value="<?=h($car['year'])?>" required></label><label class="field full"><span>URL Slug *</span><input id="vehicle-slug" type="text" name="slug" value="<?=h($car['slug'])?>" required><p class="form-help">Used in the public car link. Lowercase letters and hyphens only.</p></label><label class="field full"><span>Short Description</span><input type="text" name="short_description" value="<?=h($car['short_description'])?>"></label><label class="field full"><span>Full Description</span><textarea name="description"><?=h($car['description'])?></textarea></label></div></section>
+<section class="form-section"><h2>Exact Rental Pricing</h2><div class="price-inputs"><label class="field"><span>Starting / Day (£)</span><input type="number" min="0" step="1" name="starting_price" value="<?=h($car['starting_price'])?>" required></label><?php foreach(range(1,7) as $day):?><label class="field"><span><?=$day?> <?=$day===1?'Day':'Days'?> (£)</span><input type="number" min="0" step="1" name="price_<?=$day?>" value="<?=h($car['prices'][(string)$day]??'')?>"></label><?php endforeach;?><label class="field"><span>Over 7 Days</span><input type="text" name="over_seven" value="<?=h($car['over_seven'])?>"></label></div></section>
+<section class="form-section"><h2>Public Status & Display</h2><div class="field-grid"><label class="field"><span>Default Status</span><select name="default_status"><?php foreach(status_options() as $key=>$label):?><option value="<?=h($key)?>" <?=($car['default_status']??'')===$key?'selected':''?>><?=h($label)?></option><?php endforeach;?></select><p class="form-help">Availability date blocks override this status while active.</p></label><label class="field"><span>Display Order</span><input type="number" name="sort_order" value="<?=h($car['sort_order'])?>"></label><label class="field full"><span>Public Status Note</span><input type="text" name="public_note" value="<?=h($car['public_note'])?>" placeholder="Optional note shown when no availability block is active"></label><label class="check-field"><input type="checkbox" name="published" value="1" <?=!empty($car['published'])?'checked':''?>><span>Published on website</span></label><label class="check-field"><input type="checkbox" name="featured" value="1" <?=!empty($car['featured'])?'checked':''?>><span>Featured on home page</span></label></div></section>
+<div class="form-actions"><a class="admin-button secondary" href="<?=url('admin/cars.php')?>">Back</a><?php if($car['id']):?><a class="admin-button secondary" href="<?=url('admin/media.php?car_id='.rawurlencode($car['id']))?>">Manage Media</a><?php endif;?><button class="admin-button" type="submit">Save Vehicle</button></div>
+</form>
+<?php require dirname(__DIR__) . '/includes/admin-footer.php'; ?>
