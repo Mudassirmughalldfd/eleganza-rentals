@@ -1,21 +1,152 @@
-# Secrets and local installation state
+# ==================================================
+# ELEGANZA RENTALS — GIT IGNORE
+# ==================================================
+
+# --------------------------------------------------
+# Private credentials and environment files
+# --------------------------------------------------
 /config.local.php
+/.env
+/.env.local
+/.env.production
+/.env.development
+/.env.testing
+/config/*.local.php
+/config/*credentials*.php
+/config/*secret*.php
+/.htpasswd
+
+# Keep safe example configuration files
+!/config.local.example.php
+!/.env.example
+
+
+# --------------------------------------------------
+# Local installation and runtime state
+# --------------------------------------------------
 /storage/installed.lock
 /storage/*.log
+/storage/logs/
+/storage/cache/
+/storage/sessions/
+/storage/tmp/
+/storage/backups/
 
-# User-uploaded media created after deployment
-/uploads/cars/*/*
+# Old JSON storage/runtime content
+/storage/*.json
+
+
+# --------------------------------------------------
+# Database backups and private exports
+# --------------------------------------------------
+/database/backups/
+/database/exports/
+/database/*.sql.gz
+/database/*.dump
+/database/*.bak
+/database/*.zip
+
+# Keep database structure files in GitHub:
+# database/schema.sql
+# database/migrations/
+# database/seeds/
+
+
+# --------------------------------------------------
+# User-uploaded media
+#
+# Ignore future uploads created from the admin panel.
+# Keep only the original Mercedes and BMW demo images.
+# --------------------------------------------------
+/uploads/*
+
+# Keep uploads security file
+!/uploads/.htaccess
+
+# Allow the cars directory
+!/uploads/cars/
+/uploads/cars/*
+
+# Allow original Mercedes and BMW directories
+!/uploads/cars/mercedes/
+!/uploads/cars/bmw/
+
+# Ignore everything inside Mercedes first
+/uploads/cars/mercedes/*
+
+# Keep original Mercedes images
 !/uploads/cars/mercedes/mercedes-01.jpg
 !/uploads/cars/mercedes/mercedes-02.jpg
 !/uploads/cars/mercedes/mercedes-03.jpg
 !/uploads/cars/mercedes/mercedes-04.jpg
+
+# Ignore everything inside BMW first
+/uploads/cars/bmw/*
+
+# Keep original BMW images
 !/uploads/cars/bmw/bmw-01.jpg
 !/uploads/cars/bmw/bmw-02.jpg
 !/uploads/cars/bmw/bmw-03.jpg
 !/uploads/cars/bmw/bmw-04.jpg
 
-# OS/editor files
-.DS_Store
-Thumbs.db
+
+# --------------------------------------------------
+# Temporary files
+# --------------------------------------------------
+/tmp/
+/temp/
+/cache/
+*.tmp
+*.temp
+*.cache
+*.log
+*.bak
+*.swp
+*~
+php_error.log
+
+
+# --------------------------------------------------
+# Development dependencies
+# --------------------------------------------------
+/node_modules/
+
+# Uncomment only when Hostinger runs composer install:
+# /vendor/
+
+
+# --------------------------------------------------
+# Testing files
+# --------------------------------------------------
+.phpunit.result.cache
+.phpunit.cache/
+
+
+# --------------------------------------------------
+# IDE and editor files
+# --------------------------------------------------
 .vscode/
 .idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+
+# --------------------------------------------------
+# Operating-system files
+# --------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+
+# --------------------------------------------------
+# Local archives and exported packages
+# --------------------------------------------------
+*.rar
+*.7z
+*.tar
+*.tar.gz
